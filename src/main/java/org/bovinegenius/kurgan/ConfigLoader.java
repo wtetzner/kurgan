@@ -31,8 +31,7 @@ public class ConfigLoader {
     public static <T> T loadYaml(Class<T> cls, String location) {
         try {
             ConfigType type = ConfigType.Conversions.asConfigType(cls);
-            Iterable<Node> nodes = YamlUtils.readNodes(location, location);
-            Node node = nodes.iterator().next();
+            Node node = YamlUtils.readNode(location, location);
             type.typeCheck(node);
             return (T)type.coerce(node);
         } catch (IOException e) {

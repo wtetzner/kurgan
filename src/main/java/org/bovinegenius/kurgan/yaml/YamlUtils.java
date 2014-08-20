@@ -2,6 +2,8 @@ package org.bovinegenius.kurgan.yaml;
 
 import static java.lang.String.format;
 
+import java.lang.reflect.Field;
+import java.io.Reader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,6 +15,9 @@ import java.util.List;
 
 import lombok.extern.apachecommons.CommonsLog;
 
+import org.yaml.snakeyaml.composer.Composer;
+import org.yaml.snakeyaml.parser.ParserImpl;
+import org.yaml.snakeyaml.reader.StreamReader;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.nodes.Node;
@@ -20,10 +25,16 @@ import org.yaml.snakeyaml.nodes.ScalarNode;
 
 @CommonsLog
 public class YamlUtils {
-    private static Yaml getYaml() {
-        DumperOptions options = new DumperOptions();
-        options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-        return new Yaml(options);
+    private static class NYaml extends Yaml {
+        public Node compose(StreamReader yaml) {
+            Composer composer = new Composer(new ParserImpl(yaml), resolver);
+            constructor.setComposer(composer);
+            return composer.getSingleNode();
+        }
+    }
+
+    private static NYaml getYaml() {
+        return new NYaml();
     }
 
     public static InputStream configInput(String configPath) {
@@ -59,6 +70,33 @@ public class YamlUtils {
 
     public static Iterable<Node> readNodes(String name, String location) throws IOException {
         return readNodes(name, configInput(location));
+    }
+
+    private static class NamedStreamReader extends StreamReader {
+        public NamedStreamReader(String name, Reader reader) {
+            super(reader);
+            try {
+                Field field = StreamReader.class.getDeclaredField("name");
+                field.setAccessible(true);
+                field.set(this, name);
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                throw new RuntimeException(e.getMessage(), e);
+            }
+        }
+    }
+
+    public static Node readNode(String name, InputStream in) throws IOException {
+        try (Reader reader = new InputStreamReader(in)) {
+            StreamReader streamReader = new NamedStreamReader(name, reader);
+            List<Node> results = new ArrayList<>();
+            NYaml yaml = getYaml();
+            yaml.setName(name);
+            return yaml.compose(streamReader);
+        }
+    }
+
+    public static Node readNode(String name, String location) throws IOException {
+        return readNode(name, configInput(location));
     }
 
     public static String getValue(ScalarNode node) {
