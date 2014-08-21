@@ -10,6 +10,7 @@ import java.io.Reader;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import lombok.extern.apachecommons.CommonsLog;
@@ -28,6 +29,29 @@ public class YamlUtils {
             Composer composer = new Composer(new ParserImpl(yaml), resolver);
             constructor.setComposer(composer);
             return composer.getSingleNode();
+        }
+
+        public Iterable<Node> composeAll(StreamReader yaml) {
+            final Composer composer = new Composer(new ParserImpl(yaml), resolver);
+            constructor.setComposer(composer);
+            final Iterator<Node> result = new Iterator<Node>() {
+                public boolean hasNext() {
+                    return composer.checkNode();
+                }
+
+                public Node next() {
+                    return composer.getNode();
+                }
+
+                public void remove() {
+                    throw new UnsupportedOperationException();
+                }
+            };
+            return new Iterable<Node>() {
+                public Iterator<Node> iterator() {
+                    return result;
+                }
+            };
         }
     }
 
@@ -56,10 +80,11 @@ public class YamlUtils {
 
     public static Iterable<Node> readNodes(String name, InputStream in) throws IOException {
         try (Reader reader = new InputStreamReader(in)) {
+            StreamReader streamReader = new NamedStreamReader(name, reader);
             List<Node> results = new ArrayList<>();
-            Yaml yaml = getYaml();
+            NYaml yaml = getYaml();
             yaml.setName(name);
-            for (Node node : yaml.composeAll(reader)) {
+            for (Node node : yaml.composeAll(streamReader)) {
                 results.add(node);
             }
             return Collections.unmodifiableList(results);
