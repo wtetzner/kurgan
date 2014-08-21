@@ -2,26 +2,24 @@ package org.bovinegenius.kurgan.yaml;
 
 import static java.lang.String.format;
 
-import java.lang.reflect.Field;
-import java.io.Reader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import lombok.extern.apachecommons.CommonsLog;
 
-import org.yaml.snakeyaml.composer.Composer;
-import org.yaml.snakeyaml.parser.ParserImpl;
-import org.yaml.snakeyaml.reader.StreamReader;
-import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.composer.Composer;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.ScalarNode;
+import org.yaml.snakeyaml.parser.ParserImpl;
+import org.yaml.snakeyaml.reader.StreamReader;
 
 @CommonsLog
 public class YamlUtils {
@@ -88,7 +86,6 @@ public class YamlUtils {
     public static Node readNode(String name, InputStream in) throws IOException {
         try (Reader reader = new InputStreamReader(in)) {
             StreamReader streamReader = new NamedStreamReader(name, reader);
-            List<Node> results = new ArrayList<>();
             NYaml yaml = getYaml();
             yaml.setName(name);
             return yaml.compose(streamReader);

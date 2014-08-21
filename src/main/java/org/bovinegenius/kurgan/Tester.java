@@ -20,7 +20,7 @@ public class Tester {
     public static interface Config {
         String foo(String def);
         String bar();
-	List<String> stuff();
+        List<String> stuff();
         List<String> items();
         List<Thingy<BigDecimal>> getThingies();
 
