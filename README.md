@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/wtetzner/kurgan.png?branch=master)](https://travis-ci.org/wtetzner/kurgan)
 
 Kurgan
 ======
