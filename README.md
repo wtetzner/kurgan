@@ -31,11 +31,15 @@ To load a YAML file, you first need to define one or more interfaces to represen
 
 You can then load the config by using
 
-    ConfigLoader.loadYaml("/path/to/config.yaml", ConfigInterface.class)
+```java
+ConfigLoader.loadYaml("/path/to/config.yaml", ConfigInterface.class)
+```
 
 to load a file, or
 
-    ConfigLoader.loadYaml("classpath:/path/to/config.yaml", ConfigInterface.class)
+```java
+ConfigLoader.loadYaml("classpath:/path/to/config.yaml", ConfigInterface.class)
+```
 
 to load from the classpath.
 
