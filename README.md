@@ -43,7 +43,7 @@ ConfigLoader.loadYaml("classpath:/path/to/config.yaml", ConfigInterface.class)
 
 to load from the classpath.
 
-You can also use ```javaConfigLoader.loadAllYaml``` to load a list of objects out of a YAML file that has multiple documents in it.
+You can also use `ConfigLoader.loadAllYaml` to load a list of objects out of a YAML file that has multiple documents in it.
 
 ```java
 package example;
