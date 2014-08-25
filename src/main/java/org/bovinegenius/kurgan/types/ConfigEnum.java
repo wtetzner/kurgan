@@ -4,14 +4,17 @@ import static java.lang.String.format;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import lombok.Value;
 
 import org.bovinegenius.kurgan.ConfigTypeErrorException;
 import org.bovinegenius.kurgan.EnumName;
+import org.bovinegenius.kurgan.string.StringUtils;
 import org.bovinegenius.kurgan.yaml.YamlUtils;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.ScalarNode;
@@ -49,16 +52,32 @@ public class ConfigEnum implements ConfigType {
         return Collections.unmodifiableMap(names);
     }
 
+    private String errorMessage(String name) {
+        return format("Failed to map %s to enum %s; allowed values are %s",
+                name,
+                cls.getSimpleName(),
+                StringUtils.join(", ", enumNamesList()));
+    }
+    
     @SuppressWarnings("rawtypes")
     private Enum valueOf(Node node, String name) { 
         try {
             Method method = cls.getDeclaredMethod("valueOf", new Class<?>[] { String.class });
             return (Enum)method.invoke(null, name);
         } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-            throw new ConfigTypeErrorException(node, format("Failed to map %s to an enum of type %s", name, cls.getCanonicalName()), e);
+            throw new ConfigTypeErrorException(node, errorMessage(name), e);
         }
     }
 
+    @SuppressWarnings("rawtypes")
+    private List<String> enumNamesList() {
+        List<String> results = new ArrayList<>();
+        for (Enum enumVal : (Enum[])cls.getEnumConstants()) {
+            results.add(enumVal.name());
+        }
+        return Collections.unmodifiableList(results);
+    }
+    
     @SuppressWarnings("rawtypes")
     private Object toEnum(Node node) {
         if (!(node instanceof ScalarNode)) {
@@ -72,7 +91,7 @@ public class ConfigEnum implements ConfigType {
         }
         Enum value = valueOf(node, configName);
         if (value == null) {
-            throw new ConfigTypeErrorException(sNode, format("Failed to map %s to an enum of type %s", configName, cls.getCanonicalName()));
+            throw new ConfigTypeErrorException(sNode, errorMessage(configName));
         }
         return value;
     }
