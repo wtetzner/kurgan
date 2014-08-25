@@ -2,47 +2,43 @@ package org.bovinegenius.kurgan;
 
 import java.io.File;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.net.URI;
-import java.net.URL;
-import java.nio.file.Path;
 import java.util.List;
-import java.util.Map;
 
 
 public class Tester {
-    public static enum State {
-        HUNGRY,
-        FULL,
-        NOT_SURE
+    public static enum Format {
+        JSON,
+        XML,
+        HTML
     }
 
-    public static interface Thingy<T> {
-        T baz();
+    public static interface Resource<T> {
+        T location();
+        Format format();
     }
 
+    public static interface HttpResource {
+        @FieldName("disk-resource")
+        Resource<File> getDiskResource();
+        
+        @FieldName("rest-resource")
+        Resource<URI> getRestResource();
+    }
+    
     public static interface Config {
-        String foo(String def);
-        String bar();
-        List<String> stuff();
-        List<String> items();
-        List<Thingy<BigDecimal>> getThingies();
-
-        int number();
-
-        @FieldName("thingy map")
-        Map<String,Thingy<Boolean>> thingyMap();
-
-        URI uri();
-        URL url();
-        File file();
-        Path path();
-        State state();
+        @FieldName("read-only")
+        boolean readOnly();
+        
+        @FieldName("max-file-size")
+        long maxFileSize();
+        List<HttpResource> getResources();
     }
 
     public static void main(String[] args) throws IOException {
-        Config config = ConfigLoader.loadYaml(Config.class, System.getProperty("user.home") + "/temp/test.yaml");
-        System.out.println(config);
-        System.out.println(config.getThingies().get(0).baz().getClass());
+        //Config config = ConfigLoader.loadYaml(Config.class, System.getProperty("user.home") + "/temp/test.yaml");
+        //System.out.println(config);
+        Iterable<Config> configs = ConfigLoader.loadAllYaml(Config.class, System.getProperty("user.home") + "/temp/test.yaml");
+        System.out.println(configs);
     }
 }

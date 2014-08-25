@@ -1,12 +1,14 @@
 package org.bovinegenius.kurgan;
 
 import static java.lang.String.format;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.bovinegenius.kurgan.types.ConfigType;
 import org.bovinegenius.kurgan.yaml.YamlUtils;
+import org.yaml.snakeyaml.composer.ComposerException;
 import org.yaml.snakeyaml.nodes.Node;
 
 
@@ -36,6 +38,8 @@ public class ConfigLoader {
             return (T)type.coerce(node);
         } catch (IOException e) {
             throw new ConfigException(format("Failed to load config from %s", location), e);
+        } catch (ComposerException e) {
+            throw new ConfigException(e.getMessage(), e);
         }
     }
 }
