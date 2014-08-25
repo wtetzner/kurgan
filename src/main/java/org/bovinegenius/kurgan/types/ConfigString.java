@@ -8,7 +8,7 @@ import org.yaml.snakeyaml.nodes.ScalarNode;
 
 public class ConfigString implements ConfigType {
     public static final ConfigString value = new ConfigString();
-    
+
     @Override
     public Object coerce(Node node) {
         return YamlUtils.getValue((ScalarNode)node);
@@ -16,12 +16,11 @@ public class ConfigString implements ConfigType {
 
     @Override
     public void typeCheck(Node node) throws ConfigTypeErrorException {
-        System.out.println(String.format("tag: %s", node.getTag().getValue()));
         if (!(node instanceof ScalarNode)) {
             throw new ConfigTypeErrorException(node, String.format("Expected %s, found %s", this.toString(), node.getNodeId()));
         }
     }
-    
+
     @Override
     public String toString() {
         return "String";

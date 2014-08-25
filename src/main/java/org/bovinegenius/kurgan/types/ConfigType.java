@@ -85,6 +85,8 @@ public interface ConfigType {
                 return ConfigFile.value;
             } else if (cls.equals(Path.class)) {
                 return ConfigPath.value;
+            } else if (cls.isEnum()) {
+                return new ConfigEnum(cls);
             } else if (cls.isInterface()) {
                 return interfaceToConfigType(cls, types);
             } else {

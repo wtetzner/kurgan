@@ -15,6 +15,7 @@ import lombok.Value;
 
 import org.bovinegenius.kurgan.ConfigException;
 import org.bovinegenius.kurgan.ConfigTypeErrorException;
+import org.bovinegenius.kurgan.FieldName;
 import org.bovinegenius.kurgan.string.StringUtils;
 import org.bovinegenius.kurgan.yaml.YamlUtils;
 import org.yaml.snakeyaml.nodes.MappingNode;
