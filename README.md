@@ -94,7 +94,7 @@ public class Tester {
 Here's an example of what a valid config file might look like.
 
     
-```YAML
+```yaml
 read-only: true
 max-file-size: 1000000
 
