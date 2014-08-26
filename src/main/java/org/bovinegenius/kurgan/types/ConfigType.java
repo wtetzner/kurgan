@@ -13,11 +13,14 @@ import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.bovinegenius.kurgan.ConfigException;
 import org.bovinegenius.kurgan.ConfigTypeErrorException;
@@ -38,11 +41,14 @@ public interface ConfigType {
             Type type = resolve(inType, types);
             Class<?> cls = classFromType(type);
             if (type instanceof ParameterizedType) {
-                if (cls.equals(List.class)) {
-                    ParameterizedType ptype = (ParameterizedType)type;
+                ParameterizedType ptype = (ParameterizedType)type;
+                if (cls.equals(Collection.class)) {
+                    return new ConfigCollection(toConfigType(resolve(ptype.getActualTypeArguments()[0], types), types));
+                } else if (cls.equals(List.class)) {
                     return new ConfigList(toConfigType(resolve(ptype.getActualTypeArguments()[0], types), types));
+                } else if (cls.equals(Set.class)) {
+                    return new ConfigSet(toConfigType(resolve(ptype.getActualTypeArguments()[0], types), types));
                 } else if (cls.equals(Map.class)) {
-                    ParameterizedType ptype = (ParameterizedType)type;
                     return new ConfigMap(
                             toConfigType(resolve(ptype.getActualTypeArguments()[0], types), types),
                             toConfigType(resolve(ptype.getActualTypeArguments()[1], types), types));
@@ -77,6 +83,10 @@ public interface ConfigType {
                 return ConfigDouble.value;
             } else if (cls.equals(BigDecimal.class)) {
                 return ConfigBigDec.value;
+            } else if (cls.equals(Pattern.class)) {
+                return ConfigPattern.value;
+            } else if (cls.equals(Class.class)) {
+                return ConfigClass.value;
             } else if (cls.equals(URI.class)) {
                 return ConfigUri.value;
             } else if (cls.equals(URL.class)) {

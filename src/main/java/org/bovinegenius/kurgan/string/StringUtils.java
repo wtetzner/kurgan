@@ -1,6 +1,7 @@
 package org.bovinegenius.kurgan.string;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -68,8 +69,8 @@ public class StringUtils {
         if (obj == null) return "null";
         if (obj instanceof String) {
             return String.format("\"%s\"", obj);
-        } else if (obj instanceof List) {
-            List<?> items = (List<?>)obj;
+        } else if (obj instanceof Collection) {
+            Collection<?> items = (Collection<?>)obj;
             List<String> strs = new ArrayList<>();
             for (Object item : items) {
                 strs.add(print(item));
