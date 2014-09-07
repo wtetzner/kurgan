@@ -64,7 +64,30 @@ public class StringUtils {
         }
         return join("\n", lines);
     }
-    
+
+    public static String[] splitCamelCase(String s) {
+        return s.split(String.format("%s|%s|%s",
+                "(?<=[A-Z])(?=[A-Z][a-z])",
+                "(?<=[^A-Z])(?=[A-Z])",
+                "(?<=[A-Za-z])(?=[^A-Za-z])"
+                ));
+    }
+
+    public static String camelCaseToHyphens(String s) {
+        String[] pieces = splitCamelCase(s);
+        StringBuilder sb = new StringBuilder();
+        boolean first = true;
+        for (String piece : pieces) {
+            if (first) {
+                first = false;
+            } else {
+                sb.append("-");
+            }
+            sb.append(piece.toUpperCase().toLowerCase());
+        }
+        return sb.toString();
+    }
+
     public static String print(Object obj) {
         if (obj == null) return "null";
         if (obj instanceof String) {

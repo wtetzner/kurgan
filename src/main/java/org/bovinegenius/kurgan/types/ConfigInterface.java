@@ -31,17 +31,21 @@ public class ConfigInterface implements ConfigType {
         return String.valueOf(methodName.charAt(3)).toLowerCase() + methodName.substring(4);
     }
 
-    public static String name(Method method) {
-        FieldName fieldName = method.getAnnotation(FieldName.class);
-        if (fieldName != null) {
-            return fieldName.value();
-        }
+    private static String baseName(Method method) {
         String methodName = method.getName();
         if (methodName.length() > 3 && methodName.startsWith("get") && Character.isUpperCase(methodName.charAt(3))) {
             return nameFromGetter(methodName);
         } else {
             return methodName;
         }
+    }
+    
+    public static String name(Method method) {
+        FieldName fieldName = method.getAnnotation(FieldName.class);
+        if (fieldName != null) {
+            return fieldName.value();
+        }
+        return StringUtils.camelCaseToHyphens(baseName(method));
     }
 
     @Value

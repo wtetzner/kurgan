@@ -22,10 +22,7 @@ public class Tester {
     }
 
     public static interface HttpResource {
-        @FieldName("disk-resource")
         Resource<File> getDiskResource();
-
-        @FieldName("rest-resource")
         Resource<URI> getRestResource();
     }
 
@@ -38,7 +35,6 @@ public class Tester {
         @FieldName("str-coll")
         Collection<String> strColl();
 
-        @FieldName("read-only")
         boolean readOnly();
 
         @FieldName("max-file-size")
