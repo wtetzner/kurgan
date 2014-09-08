@@ -113,3 +113,13 @@ resources:
       format: HTML
 ```
 
+Building
+========
+
+    mvn package
+
+Publishing
+==========
+
+    mvn deploy
+
