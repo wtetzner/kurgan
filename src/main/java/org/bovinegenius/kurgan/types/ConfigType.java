@@ -11,7 +11,6 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URI;
 import java.net.URL;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -93,8 +92,6 @@ public interface ConfigType {
                 return ConfigUrl.value;
             } else if (cls.equals(File.class)) {
                 return ConfigFile.value;
-            } else if (cls.equals(Path.class)) {
-                return ConfigPath.value;
             } else if (cls.isEnum()) {
                 return new ConfigEnum(cls);
             } else if (cls.isInterface()) {
