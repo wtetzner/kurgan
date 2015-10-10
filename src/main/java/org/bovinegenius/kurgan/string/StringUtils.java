@@ -91,7 +91,15 @@ public class StringUtils {
     public static String print(Object obj) {
         if (obj == null) return "null";
         if (obj instanceof String) {
-            return String.format("\"%s\"", obj);
+            return String.format("\"%s\"",
+                    ((String) obj)
+                    .replace("\\", "\\\\")
+                    .replace("\n", "\\n")
+                    .replace("\t", "\\t")
+                    .replace("\b", "\\b")
+                    .replace("\r", "\\r")
+                    .replace("\f", "\\f")
+                    .replace("\"", "\\\""));
         } else if (obj instanceof Collection) {
             Collection<?> items = (Collection<?>)obj;
             List<String> strs = new ArrayList<>();
