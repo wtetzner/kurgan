@@ -39,7 +39,7 @@ public class ConfigInterface implements ConfigType {
             return methodName;
         }
     }
-    
+
     public static String name(Method method) {
         FieldName fieldName = method.getAnnotation(FieldName.class);
         if (fieldName != null) {
@@ -119,7 +119,7 @@ public class ConfigInterface implements ConfigType {
             }
         }
     }
-    
+
     @Override
     public void typeCheck(Node node) throws ConfigTypeErrorException {
         if (YamlUtils.isNull(node)) {
@@ -161,42 +161,79 @@ public class ConfigInterface implements ConfigType {
         return sb.toString();
     }
 
-    @Value
+    //@Value
     private static class ConfigHandler implements InvocationHandler {
         @NonNull ConfigInterface configInterface;
         @NonNull Map<String,Object> data;
+        int hashCode;
+
+        public ConfigHandler(@NonNull ConfigInterface configInterface, @NonNull Map<String,Object> data) {
+            this.configInterface = configInterface;
+            this.data = data;
+            this.hashCode = computeHashCode(configInterface, data);
+        }
+
+        private static int computeHashCode(ConfigInterface configInterface, Map<String,Object> data) {
+            return data.hashCode() ^ configInterface.getClass().hashCode();
+        }
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] argsArray)
                 throws Throwable {
             Object[] args = argsArray == null ? new Object[] {} : argsArray;
-            if (method.getName().equals("toString") && method.getParameterTypes().length == 0 && args.length == 0) {
-                StringBuilder sb = new StringBuilder(configInterface.getConfigInterface().getSimpleName());
-                sb.append("(");
-                boolean start = true;
-                for (Map.Entry<String,ConfigField> fieldPair : configInterface.getFields().entrySet()) {
-                    ConfigField field = fieldPair.getValue();
-                    if (start) {
-                        start = false;
-                    } else {
-                        sb.append(", ");
-                    }
-                    sb.append(field.getKeyName());
-                    sb.append("=");
-                    sb.append(StringUtils.print(data.get(field.getKeyName())));
-                }
-                sb.append(")");
-                return sb.toString();
-            }
-            String fieldName = name(method);
-            Object value = data.get(fieldName);
-            if (value != null) {
-                return value;
-            } else if (args.length == 1) {
-                return args[0];
+            if (method.getDeclaringClass().equals(Object.class)) {
+                return method.invoke(this, args);
             } else {
-                return null;
+                String fieldName = name(method);
+                Object value = data.get(fieldName);
+                if (value != null) {
+                    return value;
+                } else if (args.length == 1) {
+                    return args[0];
+                } else {
+                    return null;
+                }
             }
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == null) {
+                return false;
+            } else if (Proxy.isProxyClass(obj.getClass())
+                    && Proxy.getInvocationHandler(obj).getClass().equals(this.getClass())) {
+                InvocationHandler otherHandler = Proxy.getInvocationHandler(obj);
+                ConfigHandler other = (ConfigHandler)otherHandler;
+                return this.data.equals(other.data)
+                        && this.configInterface.getConfigInterface().equals(other.configInterface.getConfigInterface());
+            } else {
+                return false;
+            }
+        }
+
+        @Override
+        public int hashCode() {
+            return this.hashCode;
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder(configInterface.getConfigInterface().getSimpleName());
+            sb.append("(");
+            boolean start = true;
+            for (Map.Entry<String,ConfigField> fieldPair : configInterface.getFields().entrySet()) {
+                ConfigField field = fieldPair.getValue();
+                if (start) {
+                    start = false;
+                } else {
+                    sb.append(", ");
+                }
+                sb.append(field.getKeyName());
+                sb.append("=");
+                sb.append(StringUtils.print(data.get(field.getKeyName())));
+            }
+            sb.append(")");
+            return sb.toString();
         }
     }
 }
