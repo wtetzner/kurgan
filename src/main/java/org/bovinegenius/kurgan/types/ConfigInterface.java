@@ -15,7 +15,7 @@ import lombok.Value;
 
 import org.bovinegenius.kurgan.ConfigException;
 import org.bovinegenius.kurgan.ConfigTypeErrorException;
-import org.bovinegenius.kurgan.FieldName;
+import org.bovinegenius.kurgan.KurganField;
 import org.bovinegenius.kurgan.string.StringUtils;
 import org.bovinegenius.kurgan.yaml.YamlUtils;
 import org.yaml.snakeyaml.nodes.MappingNode;
@@ -41,7 +41,7 @@ public class ConfigInterface implements ConfigType {
     }
 
     public static String name(Method method) {
-        FieldName fieldName = method.getAnnotation(FieldName.class);
+        KurganField fieldName = method.getAnnotation(KurganField.class);
         if (fieldName != null) {
             return fieldName.value();
         }

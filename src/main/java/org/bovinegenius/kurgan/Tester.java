@@ -7,12 +7,30 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import lombok.Getter;
+
 
 public class Tester {
+    @KurganEnum(valueOf="of")
     public static enum Format {
-        JSON,
-        XML,
-        HTML
+        JSON("json"),
+        XML("xml"),
+        HTML("html");
+
+        @Getter private final String text;
+
+        private Format(String text) {
+            this.text = text;
+        }
+
+        public static Format of(String text) {
+            for (Format format : Format.values()) {
+                if (format.getText().equalsIgnoreCase(text)) {
+                    return format;
+                }
+            }
+            throw new RuntimeException(String.format("Unknown %s: %s", Format.class.getSimpleName(), text));
+        }
     }
 
     public static interface Resource<T> {
@@ -30,12 +48,12 @@ public class Tester {
 
         Set<String> strs();
 
-        @FieldName("str-coll")
+        @KurganField("str-coll")
         Collection<String> strColl();
 
         boolean readOnly();
 
-        @FieldName("max-file-size")
+        @KurganField("max-file-size")
         long maxFileSize();
         List<HttpResource> getResources();
     }

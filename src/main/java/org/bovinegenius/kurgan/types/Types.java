@@ -6,6 +6,9 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * An environment to track type variables
+ */
 public class Types {
     private final Types parent;
     private final Map<String,Type> map;
