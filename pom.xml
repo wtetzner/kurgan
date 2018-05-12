@@ -75,6 +75,24 @@
   <build>
     <plugins>
       <plugin>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok-maven-plugin</artifactId>
+        <version>1.16.20.0</version>
+        <executions>
+          <execution>
+            <phase>process-sources</phase>
+            <goals>
+              <goal>delombok</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <addOutputDirectory>false</addOutputDirectory>
+          <outputDirectory>${project.build.directory}/delombok</outputDirectory>
+          <sourceDirectory>src/main/java</sourceDirectory>
+        </configuration>
+      </plugin>
+      <plugin>
         <groupId>org.sonatype.plugins</groupId>
         <artifactId>nexus-staging-maven-plugin</artifactId>
         <version>1.6.2</version>
@@ -102,6 +120,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.0.0</version>
         <executions>
           <execution>
             <id>attach-javadocs</id>
@@ -110,6 +129,10 @@
             </goals>
           </execution>
         </executions>
+        <configuration>
+          <defaultVersion>${project.version}</defaultVersion>
+          <sourcepath>${project.build.directory}/delombok</sourcepath>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
