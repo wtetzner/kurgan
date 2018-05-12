@@ -16,7 +16,7 @@ To use with maven, add
 <dependency>
   <groupId>org.bovinegenius</groupId>
   <artifactId>kurgan</artifactId>
-  <version>0.5.0</version>
+  <version>0.6.0</version>
 </dependency>
 ```
 
