@@ -2,3 +2,12 @@ langauge: java
 script: mvn clean test
 jdk:
   - oraclejdk8
+
+notifications:
+  webhooks:
+    urls:
+      - "https://scalar.vector.im/api/neb/services/hooks/dHJhdmlzLWNpLyU0MHd0ZXR6bmVyJTNBbWF0cml4Lm9yZy8lMjFoRWtwUHl6eWNuZlJCdkxxaHQlM0FtYXRyaXgub3Jn"
+    on_success: always
+    on_failure: always
+    on_start: always
+  
