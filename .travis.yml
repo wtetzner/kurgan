@@ -1,5 +1,5 @@
 langauge: java
-script: mvn clean test
+script: mvn clean package
 jdk:
   - oraclejdk8
 
