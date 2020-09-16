@@ -122,9 +122,8 @@ public class YamlUtils {
     }
 
     public static String getValue(ScalarNode node) {
-        int style = (int)node.getStyle();
         String value = node.getValue();
-        if (value.equals("null") && style == 0) {
+        if (value.equals("null") && node.isPlain()) {
             return null;
         } else {
             return value;
@@ -140,10 +139,9 @@ public class YamlUtils {
     }
 
     public static String printScalar(ScalarNode node) {
-        int style = (int)node.getStyle();
         String value = node.getValue();
-        if (style != 0) {
-            return node.getStyle() + value + node.getStyle();
+        if (!node.isPlain()) {
+            return node.getScalarStyle() + value + node.getScalarStyle();
         } else {
             return value;
         }
